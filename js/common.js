@@ -58,6 +58,21 @@
 			tick();
 		}
 	});
+	$.define("tabs", {
+		bind:function(head, content){
+			head = $(head);
+			if(head.length){
+				content = $(content);
+				var show = head.attr('classActive');
+				var hide = head.attr('classNormal');
+				var lis = head.find('li').mouseover(function(){
+					lis.not(this).attr('class', hide);
+					content.hide().eq(lis.index(this)).show();
+					this.className = show;
+				});
+			}
+		}
+	});
 	$(function(){
 		$(document).on('click','a.cmAction',function(e){
 			var href = $(e.target).attr('href');
@@ -73,13 +88,13 @@
 				}else{ e.preventDefault();return false; }
 			}
 		});
-		var cb = $('.load_callback');
-		cb.each(function(){
+		$('.load_callback').each(function(){
 			var id = this.id;
 			var callback = $.load[id];
 			if(id && callback){
 				callback.call(this, id);
 			} 
 		});
+		$.tabs.bind('.tabs_head','.tabs_content');
 	});
 }(jQuery));
