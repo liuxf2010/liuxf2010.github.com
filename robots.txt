@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+Allow: /channels/
+Allow: /contents/
+Disallow: /js/
+Disallow: /ads/
+Disallow: /css/
+Disallow: /images/
+Disallow: /upload/
