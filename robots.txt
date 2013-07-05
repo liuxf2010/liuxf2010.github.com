@@ -7,3 +7,6 @@ Disallow: /ads/
 Disallow: /css/
 Disallow: /images/
 Disallow: /upload/
+
+Sitemap: http://www.lady172.com/sitemap/sitemap.xml
+Sitemap: http://www.lady172.com/sitemap/baidunews.xml
