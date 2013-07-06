@@ -1,10 +1,3 @@
-(function(w,d,n,h,s) {
-    w[n]=w[n]||[];
-    h = d.createElement("script");
-    h.src = "http://hm.baidu.com/hm.js?b566737c9601c4fc566afe1899cd8ccd";
-    s = d.getElementsByTagName("script")[0]; 
-    s.parentNode.insertBefore(h, s);
-}(this,document,'_hmt'));
 ;(function($){
 	$.define = function(name, object){
 		if(!$[name]){
