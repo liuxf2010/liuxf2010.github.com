@@ -1,5 +1,4 @@
 .impowerBox .qrcode {width: 200px;}
 .impowerBox .title {display: none;}
-.impowerBox .info {width: 200px;}
-.status_icon {display：none}
-.impowerBox .status {text-align: center;}
+.impowerBox .info {position: absolute;top: 0;width: 100%;}
+.impowerBox .panelContent { position: relative;padding-top: 50px;}
