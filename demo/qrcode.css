@@ -1,6 +1,6 @@
 .impowerBox .qrcode { width: 200px; }
-.impowerBox .info { position: absolute;top: 0;width: 100%; }
-.impowerBox .panelContent { position: relative;padding-top: 50px;}
+.impowerBox .info { position: absolute;top: 10px;width: 100%; }
+.impowerBox .panelContent { position: relative;padding-top: 60px;}
 .impowerBox .title {
   font-size: 0;
   color: transparent;
