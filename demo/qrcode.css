@@ -1,4 +1,38 @@
-.impowerBox .qrcode {width: 200px;}
-.impowerBox .title {display: none;}
-.impowerBox .info {position: absolute;top: 0;width: 100%;}
+.impowerBox .qrcode { width: 200px; }
+.impowerBox .info { position: absolute;top: 0;width: 100%; }
 .impowerBox .panelContent { position: relative;padding-top: 50px;}
+.impowerBox .title {
+  font-size: 0;
+  color: transparent;
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: 28px;
+  height: 28px;
+  border: solid 4px #000;
+}
+.impowerBox .title:before,
+.impowerBox .title:after {
+  content: '';
+  display: block;
+  position: absolute;
+  box-sizing: border-box;
+}
+.impowerBox .title:before{
+  top: -4px;
+  left: 6px;
+  width: 8px;
+  height: 28px;
+  background: #FFF;
+}
+.impowerBox .title:after{
+  width: 28px;
+  height: 8px;
+  left: -4px;
+  top: 6px;
+  border-style: solid;
+  border-width: 2px 0;
+  border-color: #FFF;
+  background: #000;
+}
