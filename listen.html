@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>listen</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta name="renderer" content="webkit">
+    <style type="text/css">
+      body { text-align: center; }
+      #words { max-width: 600px; min-height: 300px; margin: 20px auto; border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-word; font-size: 30px; }
+      #words a { display: inline-flex; margin: 10px; cursor: pointer; white-space: nowrap; }
+      #words a[selected] { color: red; }
+      #words a:hover { color: red; }
+      #select { margin-left: 20px; }
+      .audio { display: flex; justify-content: center; }
+      .audio input { width: 80px; margin: 0 10px; text-align:center; }
+    </style>
+    <script src="listen.js"></script>
+</head>
+<body>
+<div>
+  <input id="type0" name="type" type="radio" value="0" /><label for="type0">美式</label>
+  <input id="type1" name="type" type="radio" value="1" checked="checked" /><label for="type1">英式</label>
+  <select id="select" onchange="updateWords()"></select>
+</div>
+<div id="words">
+  
+</div>
+<div class="audio">
+  <audio id="audio" controls="controls"></audio>
+  <input type="number" value="3" id="count" />
+  <input type="number" value="5" id="delay" />
+  <button id="btn">Play</button>
+</div>
+<script>
+let wordList = []
+function updateWords() {
+  let item = data[select.value]
+  let ss = []
+  wordList = item.words.split(/\s/g).map((word, index) => {
+    let wordFmt = word.indexOf("#") > 0 ? word.replace(/#/g, ' ') : word
+    ss.push('<a class="word-' + index + '" onclick="play(' + index + ')">' + wordFmt + '</a>')
+    return wordFmt
+  })
+  words.innerHTML = ss.join("")
+}
+function playWord(word) {
+  let type = document.querySelector("[name=type]:checked").value
+  audio.src = 'http://dict.youdao.com/dictvoice?type=' + type + '&audio=' + word
+  audio.play()
+}
+function play(index) {
+  playPause()
+  playWord(wordList[index])
+}
+function playHighlight(index) {
+  let curr = words.querySelector("a[selected]")
+  if(curr) {
+    curr.removeAttribute("selected")
+  }
+  words.querySelector("a.word-" + index).setAttribute("selected", "selected")
+}
+let timeID = null
+let ended = null
+function playPause() {
+  audio.pause()
+  btn.disabled = false
+  audio.removeEventListener("ended", ended)
+  ended = null
+  if(timeID) {
+    clearTimeout(timeID)
+  }
+}
+function playLoop() {
+  if(wordList.length) {
+    btn.disabled = true
+    let index = 0
+    let t = 1
+    let s = +count.value
+    let d = +delay.value * 1000
+    let next = () => {
+      index++
+      let word = wordList[index]
+      if(word) {
+        playHighlight(index)
+        playWord(word)
+      } else {
+        btn.disabled = false
+        audio.removeEventListener("ended", ended)
+        ended = null
+      }
+    }
+    ended = () => {
+      if(t < s) {
+        t++
+        timeID = setTimeout(() => { audio.play() }, d)
+      } else {
+        t = 1
+        audio.pause()
+        timeID = setTimeout(next, d)
+      }
+    }
+    audio.addEventListener("ended", ended)
+    playHighlight(index)
+    playWord(wordList[index])
+  }
+}
+let select = document.getElementById("select")
+let words = document.getElementById("words")
+let audio = document.getElementById("audio")
+let count = document.getElementById("count")
+let delay = document.getElementById("delay")
+let btn = document.getElementById("btn")
+let options = []
+let lastIndex = data.length - 1
+data.map((item, index) => {
+  if(lastIndex == index) {
+    options.push('<option value="' + index + '" selected="selected">' + item.name + '</option>')
+  } else {
+    options.push('<option value="' + index + '">' + item.name + '</option>')
+  }
+})
+select.innerHTML = options.join("")
+btn.addEventListener("click", playLoop, false)
+updateWords()
+</script>
+</body>
+</html>
