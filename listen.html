@@ -46,7 +46,7 @@ function updateWords(data) {
 }
 function playWord(word) {
   let type = document.querySelector("[name=type]:checked").value
-  audio.src = 'http://dict.youdao.com/dictvoice?type=' + type + '&audio=' + word
+  audio.src = '//dict.youdao.com/dictvoice?type=' + type + '&audio=' + word
   audio.play()
 }
 function play(index) {
