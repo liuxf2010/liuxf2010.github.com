@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>listen</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta name="renderer" content="webkit">
+    <style type="text/css">
+      html { font-size: 14px; }
+      body { text-align: center; font-size: 1.333rem; }
+      .words { max-width: 960px; min-height: 100px; margin: 1rem auto; border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-all; font-size: 1.5rem; }
+      .words a { display: inline-flex; margin: 0.5rem; cursor: pointer; word-break: break-word; }
+      .words a:hover { color: red; }
+      #select { font-size: 1.333rem; }
+      #btn { font-size: 1rem; }
+      #input { max-width: 960px; min-height: 300px; width: 100%; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+<div>
+  <button id="btn">输入完成</button>
+</div>
+<textarea id="input" placeholder="每行输入一句"></textarea>
+<div id="words_item" class="words"></div>
+<div id="words_line" class="words"></div>
+<script>
+let text = `Did you know that fat-free yoghurt is not as nutritious as regular yoghurt?
+I don't think that's right.
+In reality, fat-free yoghurt is good for your health.
+Really? Why do you say so?
+Because research shows it has proteins, calcium and good bacteria.
+These can help with breaking down food and are good for bones.
+And it doesn't have extra fat.`
+let input = document.getElementById("input")
+let wordsItem = document.getElementById("words_item")
+let wordsLine = document.getElementById("words_line")
+let btn = document.getElementById("btn")
+let proxyWordClick = event => {
+  if(event.target.nodeName === "A") {
+    let text = event.target.innerText
+    play(text)
+  }
+}
+let proxyLineClick = event => {
+  if(event.target.nodeName === "A") {
+    let text = event.target.innerText
+    play(text)
+  }
+}
+let play = text => {
+  let data = new SpeechSynthesisUtterance()
+  data.text = text
+  data.lang = 'en-US'
+  data.rate = 0.75
+  data.onend = e => {}
+  speechSynthesis.speak(data)
+}
+let formatInput = e => {
+  let txt = input.value
+  let list = txt.split(/[\r\n]/g)
+  let itemRows = []
+  let lineRows = list.map(line => {
+    itemRows.push('<div>' + line.split(/\s/g).map(word => `<a>${word}</a>`).join('') + '</div>')
+    return `<div><a>${line}</a></div>`
+  })
+  wordsItem.innerHTML = itemRows.join('')
+  wordsLine.innerHTML = lineRows.join('')
+}
+input.value = text
+btn.addEventListener("click", formatInput, false)
+wordsItem.addEventListener("click", proxyWordClick, false)
+wordsLine.addEventListener("click", proxyLineClick, false)
+</script>
+</body>
+</html>
