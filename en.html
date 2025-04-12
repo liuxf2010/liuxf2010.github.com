@@ -67,6 +67,7 @@ let formatInput = e => {
   wordsLine.innerHTML = lineRows.join('')
 }
 input.value = text
+formatInput()
 btn.addEventListener("click", formatInput, false)
 wordsItem.addEventListener("click", proxyWordClick, false)
 wordsLine.addEventListener("click", proxyLineClick, false)
