@@ -9,12 +9,12 @@
     html { font-size: 14px; color: #333; }
     body { text-align: center; font-size: 1.333rem; }
     .words { max-width: 960px; min-height: 100px; margin: 1rem auto; border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-all; font-size: 1.5rem; }
-    .words a { display: inline-flex; margin: 0.5rem; cursor: pointer; word-break: break-word; }
+    .words a { display: inline-flex; margin: 0.5rem 0.3rem; cursor: pointer; word-break: break-word; }
     .words a:hover { color: red; }
     .words a.words-line { display: inline-flex; border: 1px solid #333; padding: 3px; border-radius: 50%; }
     .words a.words-line:before { content: ""; display: block; width: 1rem; height: 1rem; background-color: #333; border-radius: 50%; }
-    .words a.words-line:hover { border-color: #F00; }
-    .words a.words-line:hover:before { background-color: #F00; }
+    .words a.words-line:hover { border-color: red; }
+    .words a.words-line:hover:before { background-color: red; }
     #select { font-size: 1.333rem; }
     #btn { font-size: 1rem; }
     #input { max-width: 960px; min-height: 300px; width: 100%; margin-top: 1rem; }
@@ -111,7 +111,7 @@ let formatInput = e => {
   let txt = input.value
   let list = txt.split(/[\r\n]/g)
   let itemRows = list.map(line => {
-    return '<div>' + line.split(/\s/g).map(word => `<a>${word}</a>`).join('') + '<a class="words-line"></a></div>'
+    return '<div>' + line.split(/\s/g).map(word => `<a>${word}</a> `).join('') + '<a class="words-line"></a></div>'
   })
   wordsItem.innerHTML = itemRows.join('')
 }
