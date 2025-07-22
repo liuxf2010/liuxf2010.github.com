@@ -2,24 +2,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>speechSynthesis</title>
+    <title>Read Word</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
     <meta name="renderer" content="webkit">
+    <style type="text/css">
+      html { font-size: 24px; }
+      body { text-align: center; font-size: 1rem; }
+      #words, #input { flex: 1; }
+      #words { border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-word; font-size: 1.667rem; }
+      #words a { display: inline-flex; margin: 0.6rem 1rem; cursor: pointer; white-space: nowrap; }
+      #words a[selected] { color: red; }
+      #words a:hover { color: red; }
+      #input { font-size: 1rem; }
+      #btn { padding: 0 1rem; }
+      .wrapper { display:flex; max-width: 960px; min-height: 300px; margin: 1rem auto; }
+      .audio { display: flex; justify-content: center; margin-top: 1rem; }
+      .audio input { width: 6rem; margin: 0 1rem; text-align:center; }
+    </style>
 </head>
 <body>
 <div>
-  <button id="btn">开始朗读</button>
+  <input id="type0" name="type" type="radio" value="0" checked="checked" /><label for="type0">美式</label>
+  <input id="type1" name="type" type="radio" value="1" /><label for="type1">英式</label>
+</div>
+<div class="audio">
+  <audio id="audio" controls="controls"></audio>
+  <input type="number" value="3" id="count" />
+  <input type="number" value="3" id="delay" />
+  <button id="btn">开始</button>
+</div>
+<div class="wrapper">
+  <textarea id="input"></textarea>
+  <div id="words"></div>
 </div>
 <script>
-var btn = document.getElementById("btn")
-btn.onclick = function() {
-  let data = new SpeechSynthesisUtterance()
-  data.text = '开始朗读，生成文本，生成语音，生成视频。'
-  data.lang = 'zh-cn'
-  data.rate = 1.2
-  // data.onend = speak_end
-  speechSynthesis.speak(data)
+let wordList = []
+function updateWords() {
+  let text = input.value
+  let ss = []
+  wordList = text.split(/[\r\n]+/g).map((word, index) => {
+    let wordFmt = word.indexOf("#") > 0 ? word.replace(/#/g, ' ') : word
+    ss.push('<a class="word-' + index + '" onclick="play(' + index + ')">' + wordFmt + '</a>')
+    return wordFmt
+  })
+  words.innerHTML = ss.join("")
 }
+function playWord(word) {
+  let type = document.querySelector("[name=type]:checked").value
+  audio.src = '//dict.youdao.com/dictvoice?type=' + type + '&audio=' + word
+  audio.play()
+}
+function play(index) {
+  playPause()
+  playWord(wordList[index])
+}
+function playHighlight(index) {
+  let curr = words.querySelector("a[selected]")
+  if(curr) {
+    curr.removeAttribute("selected")
+  }
+  words.querySelector("a.word-" + index).setAttribute("selected", "selected")
+}
+let timeID = null
+let ended = null
+let playing = false
+function playPause() {
+  playing = false
+  btn.innerText = '开始'
+  audio.pause()
+  audio.removeEventListener("ended", ended)
+  ended = null
+  if(timeID) {
+    clearTimeout(timeID)
+  }
+}
+function playLoop() {
+  if(playing) {
+    playPause()
+  } else if(wordList.length) {
+    btn.innerText = '停止'
+    playing = true
+    let index = 0
+    let t = 1
+    let s = +count.value
+    let d = +delay.value * 1000
+    let next = () => {
+      index++
+      let word = wordList[index]
+      if(word) {
+        playHighlight(index)
+        playWord(word)
+      } else {
+        playing = false
+        audio.removeEventListener("ended", ended)
+        ended = null
+      }
+    }
+    ended = () => {
+      if(t < s) {
+        t++
+        timeID = setTimeout(() => { audio.play() }, d)
+      } else {
+        t = 1
+        audio.pause()
+        timeID = setTimeout(next, d)
+      }
+    }
+    audio.addEventListener("ended", ended)
+    playHighlight(index)
+    playWord(wordList[index])
+  }
+}
+let input = document.getElementById("input")
+let words = document.getElementById("words")
+let audio = document.getElementById("audio")
+let count = document.getElementById("count")
+let delay = document.getElementById("delay")
+let btn = document.getElementById("btn")
+
+btn.addEventListener("click", playLoop, false)
+input.addEventListener("blur", updateWords, false)
 </script>
 </body>
 </html>
