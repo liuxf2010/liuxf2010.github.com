@@ -46,6 +46,7 @@ function updateWords() {
     return wordFmt
   })
   words.innerHTML = ss.join("")
+  localStorage.setItem("word-list-text", text)
 }
 function playWord(word) {
   let type = document.querySelector("[name=type]:checked").value
@@ -119,6 +120,12 @@ let audio = document.getElementById("audio")
 let count = document.getElementById("count")
 let delay = document.getElementById("delay")
 let btn = document.getElementById("btn")
+
+let word_list_text = localStorage.getItem("word-list-text")
+if(word_list_text) {
+  input.value = word_list_text
+  updateWords()
+}
 
 btn.addEventListener("click", playLoop, false)
 input.addEventListener("blur", updateWords, false)
