@@ -171,7 +171,7 @@ if(word_list_text) {
 }
 
 if(word_list_data) {
-  let options = []
+  let options = ['<option>---请选择---</option>']
   word_list_data.map((item, index) => {
     let name = item.split("#")[0]
     options.push('<option value="' + index + '">' + name + '</option>')
