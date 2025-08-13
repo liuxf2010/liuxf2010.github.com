@@ -9,11 +9,12 @@
       html { font-size: 24px; }
       body { text-align: center; font-size: 1rem; }
       #words, #input { flex: 1; min-height: 520px; }
-      #words { border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-word; font-size: 1.667rem; }
-      #words a { display: inline-flex; margin: 0.6rem 1rem; cursor: pointer; white-space: nowrap; }
+      #words { border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-word; font-size: 1rem; }
+      #words li { list-style: decimal-leading-zero; padding-left: 0.3rem; }
+      #words a { display: inline-flex; padding: 0.3rem; cursor: pointer; white-space: nowrap; }
       #words a[selected] { color: red; }
       #words a:hover { color: red; }
-      #input { font-size: 1rem; }
+      #input { font-size: 1rem; line-height: 1.5; }
       #btn { padding: 0 1rem; }
       #select { margin-left: 2rem; font-size: 1rem; }
       .wrapper { display:flex; max-width: 960px; margin: 1rem auto; }
@@ -67,35 +68,44 @@ const word_list_data = [
 "2025-8-4 room|房间 sea|海洋 beach|海滩 map|地图 place|地方 visit|参观 hurry|匆忙 buy|购买 shop|商店 sell|出售 gift|礼物 picture|照片 wonderful|极好的 famous|著名的 welcome|欢迎",
 "2025-8-5 fast|快的 slow|慢的 stop|车站 park|公园 safe|安全的 free|自由的 city|城市 money|货币 science|科学 internet|因特网 phone|电话 email|电子邮件 robot|机器人 wire|电线 hill|山丘",
 "2025-8-6 water|水 river|河 lake|湖 air|空气 weather|天气 sun|太阳 sunny|晴朗的 cloudy|多云的 windy|有风的 rain|雨 ice|冰 warm|温暖的 hot|热的 pet|宠物 animal|动物",
+"2025-8-7 cat|猫 dog|狗 bird|鸟 tiger|虎 panda|熊猫 monkey|猴 lion|狮 elephant|象 zoo|动物园 fish|鱼 farm|农场 sleep|羊 rabbit|兔 pig|猪 horse|马",
+"2025-8-8 cow|奶牛 duck|鸭 tail|尾巴 plant|种植 flower|花 grass|草 tree|树 field|田 dirty|脏的 clean|打扫 tidy|整理 earth|地球 fire|火;开枪 astronaut|宇航员 space|空间 star|星",
+"2025-8-9 noon|中午 a.m|上午 p.m|下午 calender|日历 era|纪元 period|时期 age|时代 century|世纪 week|周 weekend|周末 time|时间 early|早的 late|晚的 later|后来的 hour|时",
+"2025-8-11 o'clock|小时 year|年 month|月 yesterday|昨天 tonight|今晚 weekday|工作日 after|在...后 daily|每天 past|过去 future|将来 forever|永远 final|最终 finally|终于 lasting|持久的 moment|瞬间",
+"2025-8-12 season|季节 spring|春季 summer|夏季 autumn|秋季 winter|冬季 since|自...以来 soon|不久 while|一会儿 already|已经 recent|近来的 lately|最近 ever|曾经 everyday|每日的 usual|经常 seldom|很少",
+"2025-8-13 hardly|几乎不 once|一次 twice|两次 again|再一次 divide|除 division|除法 add|添加 addition|加法 additional|额外的 count|数数 countless|无数的 several|几个 quarter|一刻钟 double|两倍 per|每",
 ]
 </script>
 <script>
 let wordList = []
-function updateWords() {
-  let text = input.value
+function updateWords(text) {
   let ss = []
-  wordList = text.split(/[\r\n]+/g).map((word, index) => {
+  wordList = text.split(/[\r\n]+/g).sort(()=>Math.random() - 0.5).map((word, index) => {
     let wordFmt = word.indexOf("$") > 0 ? word.replace(/\$/g, ' ') : word
     let title = wordFmt
     if(wordFmt.indexOf("|") > 0) {
       title = wordFmt.split("|")[1]
       wordFmt = wordFmt.split("|")[0]
     }
-    ss.push('<a class="word-' + index + '" onclick="play(' + index + ')" title="' + title + '">' + wordFmt + '</a>')
+    ss.push('<li><a class="word-' + index + '" onclick="play(' + index + ')">' + wordFmt + ' # ' + title + '</a></li>')
     return wordFmt
   })
   words.innerHTML = ss.join("")
   return text
 }
 function inputWords() {
-  let text = updateWords()
-  localStorage.setItem("word-list-text", text)
+  let text = input.value
+  if(text != word_list_text) {
+    updateWords(text)
+    word_list_text = text
+    localStorage.setItem("word-list-text", text)
+  }
 }
 function selectWords() {
   let item = word_list_data[select.value]
   if(item) {
-    input.value = item.split(" ").slice(1).join("\r\n")
-    updateWords()
+    let text = item.split(" ").slice(1).join("\r\n")
+    input.value = updateWords(text)
   }
 }
 function playWord(word) {
@@ -174,8 +184,7 @@ let btn = document.getElementById("btn")
 
 let word_list_text = localStorage.getItem("word-list-text")
 if(word_list_text) {
-  input.value = word_list_text
-  updateWords()
+  input.value = updateWords(word_list_text)
 }
 
 if(word_list_data) {
