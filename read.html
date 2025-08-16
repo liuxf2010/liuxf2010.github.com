@@ -8,16 +8,16 @@
     <style type="text/css">
       html { font-size: 24px; }
       body { text-align: center; font-size: 1rem; }
-      #words, #input { flex: 1; min-height: 520px; }
-      #words { border: 1px solid #ccc; background-color: #efefef; text-align: left; word-break: break-word; font-size: 1rem; }
-      #words li { list-style: decimal-leading-zero; padding-left: 0.3rem; }
-      #words a { display: inline-flex; padding: 0.3rem; cursor: pointer; white-space: nowrap; }
-      #words a[selected] { color: red; }
-      #words a:hover { color: red; }
+      .words, #input { flex: 1; min-height: 520px; }
+      .words { border-style: solid; border-color: #ccc; border-width: 1px 1px 1px 0; background-color: #efefef; text-align: left; word-break: break-word; font-size: 1rem; }
+      .words li { list-style: decimal-leading-zero; padding-left: 0.3rem; }
+      .words a { display: inline-flex; padding: 0.3rem; cursor: pointer; white-space: nowrap; }
+      .words a[selected] { color: red; }
+      .words a:hover { color: red; }
       #input { font-size: 1rem; line-height: 1.5; }
-      #btn { padding: 0 1rem; }
+      .btn { padding: 0 1rem; margin-right: 1rem; }
       #select { margin-left: 2rem; font-size: 1rem; }
-      .wrapper { display:flex; max-width: 960px; margin: 1rem auto; }
+      .wrapper { display:flex; max-width: 1200px; margin: 1rem auto; }
       .audio { display: flex; justify-content: center; margin-top: 1rem; }
       .audio input { width: 6rem; margin: 0 1rem; text-align:center; }
     </style>
@@ -32,11 +32,13 @@
   <audio id="audio" controls="controls"></audio>
   <input type="number" value="3" id="count" />
   <input type="number" value="3" id="delay" />
-  <button id="btn">开始</button>
+  <button class="btn" id="btn">开始</button>
+  <button class="btn" id="reload">刷新排序</button>
 </div>
 <div class="wrapper">
   <textarea id="input"></textarea>
-  <div id="words"></div>
+  <div class="words" id="words_list"></div>
+  <div class="words" id="words_sort"></div>
 </div>
 <script>
 const word_list_data = [
@@ -74,24 +76,33 @@ const word_list_data = [
 "2025-8-11 o'clock|小时 year|年 month|月 yesterday|昨天 tonight|今晚 weekday|工作日 after|在...后 daily|每天 past|过去 future|将来 forever|永远 final|最终 finally|终于 lasting|持久的 moment|瞬间",
 "2025-8-12 season|季节 spring|春季 summer|夏季 autumn|秋季 winter|冬季 since|自...以来 soon|不久 while|一会儿 already|已经 recent|近来的 lately|最近 ever|曾经 everyday|每日的 usual|经常 seldom|很少",
 "2025-8-13 hardly|几乎不 once|一次 twice|两次 again|再一次 divide|除 division|除法 add|添加 addition|加法 additional|额外的 count|数数 countless|无数的 several|几个 quarter|一刻钟 double|两倍 per|每",
+"2025-8-14 plus|加 percent|百分之一 number|数量 limit|限制 total|合计 totally|全部 whole|整体 include|包括 compare|对比 comparsion|比较 different|不同的 difference|差异 same|相同的 similar|类似的 so|很",
+"2025-8-15 such|非常 than|比 less|更少的 bit|稍微 quite|完全 rather|相当 very|很 almost|几乎 nearly|将近 narrowly|仔细地 especially|特别 particular|特指 only|只 even|甚至 plenty|充足",
 ]
 </script>
 <script>
 let wordList = []
 function updateWords(text) {
-  let ss = []
-  wordList = text.split(/[\r\n]+/g).sort(()=>Math.random() - 0.5).map((word, index) => {
-    let wordFmt = word.indexOf("$") > 0 ? word.replace(/\$/g, ' ') : word
-    let title = wordFmt
-    if(wordFmt.indexOf("|") > 0) {
-      title = wordFmt.split("|")[1]
-      wordFmt = wordFmt.split("|")[0]
+  let sl = []
+  wordList = text.split(/[\r\n]+/g).map((wd, index) => {
+    let word = wd.indexOf("$") > 0 ? wd.replace(/\$/g, ' ') : wd
+    let title = word
+    if(word.indexOf("|") > 0) {
+      title = word.split("|")[1]
+      word = word.split("|")[0]
     }
-    ss.push('<li><a class="word-' + index + '" onclick="play(' + index + ')">' + wordFmt + ' # ' + title + '</a></li>')
-    return wordFmt
+    sl.push('<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + ' # ' + title + '</a></li>')
+    return { word, title, index }
   })
-  words.innerHTML = ss.join("")
+  words_list.innerHTML = sl.join("")
+  reloadWords()
   return text
+}
+function reloadWords() {
+  let ss = wordList.map(({ word, title, index }) => {
+    return '<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + ' # ' + title + '</a></li>'
+  })
+  words_sort.innerHTML = ss.sort(()=>Math.random() - 0.5).join("")
 }
 function inputWords() {
   let text = input.value
@@ -115,14 +126,20 @@ function playWord(word) {
 }
 function play(index) {
   playPause()
-  playWord(wordList[index])
+  playWord(wordList[index].word)
 }
 function playHighlight(index) {
-  let curr = words.querySelector("a[selected]")
+  let selector = "a.word-" + index
+  let curr = words_list.querySelector("a[selected]")
   if(curr) {
     curr.removeAttribute("selected")
   }
-  words.querySelector("a.word-" + index).setAttribute("selected", "selected")
+  words_list.querySelector(selector).setAttribute("selected", "selected")
+  curr = words_sort.querySelector("a[selected]")
+  if(curr) {
+    curr.removeAttribute("selected")
+  }
+  words_sort.querySelector(selector).setAttribute("selected", "selected")
 }
 let timeID = null
 let ended = null
@@ -149,7 +166,7 @@ function playLoop() {
     let d = +delay.value * 1000
     let next = () => {
       index++
-      let word = wordList[index]
+      let word = wordList[index].word
       if(word) {
         playHighlight(index)
         playWord(word)
@@ -171,16 +188,18 @@ function playLoop() {
     }
     audio.addEventListener("ended", ended)
     playHighlight(index)
-    playWord(wordList[index])
+    playWord(wordList[index].word)
   }
 }
 let select = document.getElementById("select")
 let input = document.getElementById("input")
-let words = document.getElementById("words")
+let words_list = document.getElementById("words_list")
+let words_sort = document.getElementById("words_sort")
 let audio = document.getElementById("audio")
 let count = document.getElementById("count")
 let delay = document.getElementById("delay")
 let btn = document.getElementById("btn")
+let reload = document.getElementById("reload")
 
 let word_list_text = localStorage.getItem("word-list-text")
 if(word_list_text) {
@@ -197,6 +216,7 @@ if(word_list_data) {
 }
 
 btn.addEventListener("click", playLoop, false)
+reload.addEventListener("click", reloadWords, false)
 input.addEventListener("blur", inputWords, false)
 select.addEventListener("change", selectWords, false)
 </script>
