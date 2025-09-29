@@ -17,7 +17,7 @@
       #input { font-size: 1rem; line-height: 1.5; }
       .btn { padding: 0 1rem; margin-right: 1rem; }
       #select { margin-left: 2rem; font-size: 1rem; }
-      .wrapper { display:flex; max-width: 1200px; margin: 1rem auto; }
+      .wrapper { display:flex; max-width: 1200px; margin: 1rem auto; flex-direction: column; }
       .audio { display: flex; justify-content: center; margin-top: 1rem; }
       .audio input { width: 6rem; margin: 0 1rem; text-align:center; }
     </style>
@@ -33,27 +33,14 @@
   <input type="number" value="3" id="count" />
   <input type="number" value="3" id="delay" />
   <button class="btn" id="btn">开始</button>
-  <button class="btn" id="reload">刷新排序</button>
 </div>
 <div class="wrapper">
   <textarea id="input"></textarea>
   <div class="words" id="words_list"></div>
-  <div class="words" id="words_sort"></div>
 </div>
 <script>
 const word_list_data = [
-"2025-8-3 listen|听 sound|声音 speak|说话 write|写 answer|回答 question|问题 trousers|裤子 hurt|受伤 hospital|医院 table|表 nurse|护士 well|健康的 holiday|节日 travel|旅游 fly|飞行",
-"2025-8-4 room|房间 sea|海洋 beach|海滩 map|地图 place|地方 visit|参观 hurry|匆忙 buy|购买 shop|商店 sell|出售 gift|礼物 picture|照片 wonderful|极好的 famous|著名的 welcome|欢迎",
-"2025-8-5 fast|快的 slow|慢的 stop|车站 park|公园 safe|安全的 free|自由的 city|城市 money|货币 science|科学 internet|因特网 phone|电话 email|电子邮件 robot|机器人 wire|电线 hill|山丘",
-"2025-8-6 water|水 river|河 lake|湖 air|空气 weather|天气 sun|太阳 sunny|晴朗的 cloudy|多云的 windy|有风的 rain|雨 ice|冰 warm|温暖的 hot|热的 pet|宠物 animal|动物",
-"2025-8-7 cat|猫 dog|狗 bird|鸟 tiger|虎 panda|熊猫 monkey|猴 lion|狮 elephant|象 zoo|动物园 fish|鱼 farm|农场 sleep|羊 rabbit|兔 pig|猪 horse|马",
-"2025-8-8 cow|奶牛 duck|鸭 tail|尾巴 plant|种植 flower|花 grass|草 tree|树 field|田 dirty|脏的 clean|打扫 tidy|整理 earth|地球 fire|火;开枪 astronaut|宇航员 space|空间 star|星",
-"2025-9-3 suppose|想 birthmark|胎记 bright|鲜艳的 strawberry|草莓 crowded|拥挤的",
-"2025-9-4 disaster|灾难 therefore|因此 cover|遮盖 instead|代替 instead of|代替... although|虽然 bathroom|浴室 quickly|马上 truly|真实地 paint|画",
 "2025-9-6 yet|还 anyway|总之 already|已经 difference|差异 hate|讨厌 successful|有成就的 scientific|科学的 wise|明智的 present|现在完成时 row|一排",
-"2025-9-7 height|身高 literature|文学 character|人物 brain|脑 value|价值观 quality|素质 impossible|不可能的 nothing|没有任何东西 actress|女演员 silver|银质的",
-"2025-9-17 condition|长期疾病 cost|花费 lend|借出 lend somebody a hand|帮助某人做事 3-D|三维 printer|打印机 invent|发明 weigh|重量",
-"2025-9-21 kilogram|千克 fix|解决 invention|发明 download|下载 apply|应用 blind|盲的 machine|机器 warn|警告 object|物体",
 ]
 </script>
 <script>
@@ -62,23 +49,11 @@ function updateWords(text) {
   let sl = []
   wordList = text.split(/[\r\n]+/g).map((wd, index) => {
     let word = wd.indexOf("$") > 0 ? wd.replace(/\$/g, ' ') : wd
-    let title = word
-    if(word.indexOf("|") > 0) {
-      title = word.split("|")[1]
-      word = word.split("|")[0]
-    }
-    sl.push('<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + ' # ' + title + '</a></li>')
-    return { word, title, index }
+    sl.push('<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + '</a></li>')
+    return { word, index }
   })
   words_list.innerHTML = sl.join("")
-  reloadWords()
   return text
-}
-function reloadWords() {
-  let ss = wordList.map(({ word, title, index }) => {
-    return '<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + ' # ' + title + '</a></li>'
-  })
-  words_sort.innerHTML = ss.sort(()=>Math.random() - 0.5).join("")
 }
 function inputWords() {
   let text = input.value
@@ -101,8 +76,18 @@ function playWord(word) {
   audio.play()
 }
 function play(index) {
-  playPause()
-  playWord(wordList[index].word)
+  // playPause()
+  // playWord(wordList[index].word)
+  let type = document.querySelector("[name=type]:checked").value
+  let lang = type == "1" ? "en-GB" : "en-US"
+  let text = wordList[index].word
+  let data = new SpeechSynthesisUtterance()
+  data.text = text
+  data.lang = lang
+  data.rate = 0.8
+  data.onend = () => {}
+  speechSynthesis.speak(data)
+
 }
 function playHighlight(index) {
   let selector = "a.word-" + index
@@ -111,11 +96,6 @@ function playHighlight(index) {
     curr.removeAttribute("selected")
   }
   words_list.querySelector(selector).setAttribute("selected", "selected")
-  curr = words_sort.querySelector("a[selected]")
-  if(curr) {
-    curr.removeAttribute("selected")
-  }
-  words_sort.querySelector(selector).setAttribute("selected", "selected")
 }
 let timeID = null
 let ended = null
@@ -170,7 +150,6 @@ function playLoop() {
 let select = document.getElementById("select")
 let input = document.getElementById("input")
 let words_list = document.getElementById("words_list")
-let words_sort = document.getElementById("words_sort")
 let audio = document.getElementById("audio")
 let count = document.getElementById("count")
 let delay = document.getElementById("delay")
@@ -192,7 +171,6 @@ if(word_list_data) {
 }
 
 btn.addEventListener("click", playLoop, false)
-reload.addEventListener("click", reloadWords, false)
 input.addEventListener("blur", inputWords, false)
 select.addEventListener("change", selectWords, false)
 </script>
