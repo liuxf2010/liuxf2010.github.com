@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Read Word</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
-    <meta name="renderer" content="webkit">
-    <style type="text/css">
-      html { font-size: 24px; }
-      body { text-align: center; font-size: 1rem; }
-      .words, #input { flex: 1; min-height: 520px; }
-      .words { border-style: solid; border-color: #ccc; border-width: 1px 1px 1px 0; background-color: #efefef; text-align: left; word-break: break-word; font-size: 1rem; }
-      .words li { list-style: decimal-leading-zero; padding-left: 0.3rem; }
-      .words a { display: inline-flex; padding: 0.3rem; cursor: pointer; white-space: nowrap; }
-      .words a[selected] { color: red; }
-      .words a:hover { color: red; }
-      #input { font-size: 1rem; line-height: 1.5; }
-      .btn { padding: 0 1rem; margin-right: 1rem; }
-      #select { margin-left: 2rem; font-size: 1rem; }
-      .wrapper { display:flex; max-width: 1200px; margin: 1rem auto; }
-      .audio { display: flex; justify-content: center; margin-top: 1rem; }
-      .audio input { width: 6rem; margin: 0 1rem; text-align:center; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Read Word</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+  <meta name="renderer" content="webkit">
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/naive-ui@2.42.0/dist/index.prod.js"></script>
+  <style type="text/css">
+    html { color: rgba(255, 255, 245, 0.86); }
+    body { background: #1b1b1f; }
+    #app { padding: 12px; }
+    #audio { height: 30px; }
+    .flex { width: 200px; }
+    .textarea { min-height: 300px; height: 100%; }
+    .wrapper-grid { display: flex; flex-direction: row; gap: 12px; }
+    .item-grid { flex: 1; }
+    .n-list .n-list-item { padding-left: 8px; }
+    @media (max-width: 1000px) {
+      .wrapper-grid {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-<div>
-  <input id="type0" name="type" type="radio" value="0" checked="checked" /><label for="type0">美式</label>
-  <input id="type1" name="type" type="radio" value="1" /><label for="type1">英式</label>
-  <select id="select"></select>
-</div>
-<div class="audio">
-  <audio id="audio" controls="controls"></audio>
-  <input type="number" value="3" id="count" />
-  <input type="number" value="3" id="delay" />
-  <button class="btn" id="btn">开始</button>
-  <button class="btn" id="reload">刷新排序</button>
-</div>
-<div class="wrapper">
-  <textarea id="input"></textarea>
-  <div class="words" id="words_list"></div>
-  <div class="words" id="words_sort"></div>
+<div id="app">
+  <n-config-provider :theme="darkTheme" :locale="zhCN" :date-locale="dateZhCN">
+    <n-space vertical :size="12">
+      <n-flex align="center">
+        <n-switch :rail-style="railStyle" checked-value="1" unchecked-value="0" v-model:value="langType">
+          <template #checked>英式</template>
+          <template #unchecked>美式</template>
+        </n-switch>
+        <n-switch :rail-style="railStyle" checked-value="1" unchecked-value="0" v-model:value="voiceType">
+          <template #checked>有道声源</template>
+          <template #unchecked>本地语音</template>
+        </n-switch>
+        <audio id="audio" controls="controls"></audio>
+        <n-select v-model:value="selectValue" :options="selectOptions" @update:value="handleSelectValue" class="flex" placeholder="请选择" />
+      </n-flex>
+      <div class="wrapper-grid">
+        <div class="item-grid">
+          <n-input v-model:value="inputValue" type="textarea" placeholder="请输入" class="textarea" />
+        </div>
+        <div class="item-grid">
+          <n-list clickable>
+            <n-list-item v-for="(item, index) in wordList" :key="index" @click="handlePlay(index)">{{ item.label }}</n-list-item>
+          </n-list>
+        </div>
+      </div>
+    </n-space>
+  </n-config-provider>
 </div>
 <script>
 const word_list_data = [
@@ -57,144 +70,100 @@ const word_list_data = [
 ]
 </script>
 <script>
-let wordList = []
-function updateWords(text) {
-  let sl = []
-  wordList = text.split(/[\r\n]+/g).map((wd, index) => {
-    let word = wd.indexOf("$") > 0 ? wd.replace(/\$/g, ' ') : wd
-    let title = word
-    if(word.indexOf("|") > 0) {
-      title = word.split("|")[1]
-      word = word.split("|")[0]
-    }
-    sl.push('<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + ' # ' + title + '</a></li>')
-    return { word, title, index }
-  })
-  words_list.innerHTML = sl.join("")
-  reloadWords()
-  return text
-}
-function reloadWords() {
-  let ss = wordList.map(({ word, title, index }) => {
-    return '<li><a class="word-' + index + '" onclick="play(' + index + ')">' + word + ' # ' + title + '</a></li>'
-  })
-  words_sort.innerHTML = ss.sort(()=>Math.random() - 0.5).join("")
-}
-function inputWords() {
-  let text = input.value
-  if(text != word_list_text) {
-    updateWords(text)
-    word_list_text = text
-    localStorage.setItem("word-list-text", text)
-  }
-}
-function selectWords() {
-  let item = word_list_data[select.value]
-  if(item) {
-    let text = item.split(" ").slice(1).join("\r\n")
-    input.value = updateWords(text)
-  }
-}
-function playWord(word) {
-  let type = document.querySelector("[name=type]:checked").value
-  audio.src = '//dict.youdao.com/dictvoice?type=' + type + '&audio=' + word
+function playWordByAudio({ type, word }) {
+  let audio = document.getElementById("audio")
+  audio.src = `//dict.youdao.com/dictvoice?type=${type}&audio=${word}`
   audio.play()
 }
-function play(index) {
-  playPause()
-  playWord(wordList[index].word)
+function playWordByUtterance({ type, word }) {
+  let lang = type == "1" ? "en-GB" : "en-US"
+  let data = new SpeechSynthesisUtterance()
+  data.text = word
+  data.lang = lang
+  data.rate = 0.8
+  data.onend = () => {}
+  speechSynthesis.speak(data)
 }
-function playHighlight(index) {
-  let selector = "a.word-" + index
-  let curr = words_list.querySelector("a[selected]")
-  if(curr) {
-    curr.removeAttribute("selected")
-  }
-  words_list.querySelector(selector).setAttribute("selected", "selected")
-  curr = words_sort.querySelector("a[selected]")
-  if(curr) {
-    curr.removeAttribute("selected")
-  }
-  words_sort.querySelector(selector).setAttribute("selected", "selected")
-}
-let timeID = null
-let ended = null
-let playing = false
-function playPause() {
-  playing = false
-  btn.innerText = '开始'
-  audio.pause()
-  audio.removeEventListener("ended", ended)
-  ended = null
-  if(timeID) {
-    clearTimeout(timeID)
-  }
-}
-function playLoop() {
-  if(playing) {
-    playPause()
-  } else if(wordList.length) {
-    btn.innerText = '停止'
-    playing = true
-    let index = 0
-    let t = 1
-    let s = +count.value
-    let d = +delay.value * 1000
-    let next = () => {
-      index++
-      let word = wordList[index].word
-      if(word) {
-        playHighlight(index)
-        playWord(word)
-      } else {
-        playing = false
-        audio.removeEventListener("ended", ended)
-        ended = null
+function setup(props, ctx) {
+  const zhCN = naive.zhCN
+  const dateZhCN = naive.dateZhCN
+  const darkTheme = naive.darkTheme
+  const railStyle = ({ focused, checked }) => {
+    let style = {}
+    if(checked) {
+      style.background = "#d03050"
+      if (focused) {
+        style.boxShadow = "0 0 0 2px #d0305040"
+      }
+    } else {
+      style.background = "#2080f0"
+      if (focused) {
+        style.boxShadow = "0 0 0 2px #2080f040"
       }
     }
-    ended = () => {
-      if(t < s) {
-        t++
-        timeID = setTimeout(() => { audio.play() }, d)
-      } else {
-        t = 1
-        audio.pause()
-        timeID = setTimeout(next, d)
-      }
-    }
-    audio.addEventListener("ended", ended)
-    playHighlight(index)
-    playWord(wordList[index].word)
+    return style
   }
-}
-let select = document.getElementById("select")
-let input = document.getElementById("input")
-let words_list = document.getElementById("words_list")
-let words_sort = document.getElementById("words_sort")
-let audio = document.getElementById("audio")
-let count = document.getElementById("count")
-let delay = document.getElementById("delay")
-let btn = document.getElementById("btn")
-let reload = document.getElementById("reload")
-
-let word_list_text = localStorage.getItem("word-list-text")
-if(word_list_text) {
-  input.value = updateWords(word_list_text)
-}
-
-if(word_list_data) {
-  let options = ['<option>---请选择---</option>']
-  word_list_data.map((item, index) => {
-    let name = item.split(" ")[0]
-    options.push('<option value="' + index + '">' + name + '</option>')
+  const langType = Vue.ref("1")
+  const voiceType = Vue.ref("1")
+  const inputValue = Vue.ref("")
+  const selectValue = Vue.ref(null)
+  const selectOptions = Vue.ref([])
+  const handleSelectValue = index => {
+    let text = word_list_data[index]
+    if(text) {
+      inputValue.value = text.split(" ").slice(1).join("\r\n")
+    }
+  }
+  const wordList = Vue.computed(() => {
+    return inputValue.value.split(/[\r\n]+/g).map((word, index) => {
+      if(word.indexOf("|") > 0) {
+        let [wd, title] = word.split("|")
+        let label = word.replace("|", " # ")
+        return { word: wd, title, label: `${index+1}. ${label}`, index }
+      }
+      return { word, label: `${index+1}. ${word}`, index }
+    })
   })
-  select.innerHTML = options.join("")
+  const playWord = word => {
+    let type = langType.value
+    if(voiceType.value == 1) {
+      playWordByAudio({ word, type })
+    } else {
+      playWordByUtterance({ word, type })
+    }
+  }
+  const handlePlay = (index) => {
+    let { word } = wordList.value[index]
+    playWord(word)
+  }
+  const onMountedCallback = () => {
+    selectOptions.value = word_list_data.map((text, index) => {
+      let label = text.split(" ")[0]
+      return { label, value: index }
+    })
+  }
+  Vue.onMounted(onMountedCallback)
+  return {
+    zhCN,
+    dateZhCN,
+    darkTheme,
+    railStyle,
+    langType,
+    voiceType,
+    inputValue,
+    selectValue,
+    selectOptions,
+    handleSelectValue,
+    wordList,
+    handlePlay
+  }
 }
-
-btn.addEventListener("click", playLoop, false)
-reload.addEventListener("click", reloadWords, false)
-input.addEventListener("blur", inputWords, false)
-select.addEventListener("change", selectWords, false)
+const App = {
+  setup
+}
+const app = Vue.createApp(App)
+app.use(naive)
+app.mount('#app')
 </script>
 </body>
 </html>
