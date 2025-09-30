@@ -84,7 +84,7 @@ function playWordByUtterance({ type, word }) {
   let data = new SpeechSynthesisUtterance()
   data.text = word
   data.lang = lang
-  data.rate = 0.8
+  data.rate = 1
   data.onend = () => {}
   speechSynthesis.speak(data)
 }
