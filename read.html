@@ -38,7 +38,11 @@
           <template #unchecked>本地语音</template>
         </n-switch>
         <audio id="audio" controls="controls"></audio>
-        <n-select v-model:value="selectValue" :options="selectOptions" @update:value="handleSelectValue" class="flex" placeholder="请选择" />
+        <n-select v-model:value="selectValue" :options="selectOptions" @update:value="handleSelectValue" class="flex" placeholder="请选择"></n-select>
+        <n-switch :rail-style="railStyle" checked-value="1" unchecked-value="0" v-model:value="sortType">
+          <template #checked>顺序</template>
+          <template #unchecked>随机</template>
+        </n-switch>
       </n-flex>
       <div class="wrapper-grid">
         <div class="item-grid">
@@ -105,6 +109,7 @@ function setup(props, ctx) {
   }
   const langType = Vue.ref("1")
   const voiceType = Vue.ref("1")
+  const sortType = Vue.ref("1")
   const inputValue = Vue.ref("")
   const selectValue = Vue.ref(null)
   const selectOptions = Vue.ref([])
@@ -114,15 +119,21 @@ function setup(props, ctx) {
       inputValue.value = text.split(" ").slice(1).join("\r\n")
     }
   }
+  const wordListFormat = (word, index) => {
+    if(word.indexOf("|") > 0) {
+      let [wd, title] = word.split("|")
+      let label = word.replace("|", " # ")
+      return { word: wd, title, label: `${index+1}. ${label}`, index }
+    }
+    return { word, label: `${index+1}. ${word}`, index }
+  }
   const wordList = Vue.computed(() => {
-    return inputValue.value.split(/[\r\n]+/g).map((word, index) => {
-      if(word.indexOf("|") > 0) {
-        let [wd, title] = word.split("|")
-        let label = word.replace("|", " # ")
-        return { word: wd, title, label: `${index+1}. ${label}`, index }
-      }
-      return { word, label: `${index+1}. ${word}`, index }
-    })
+    let list = inputValue.value.split(/[\r\n]+/g)
+    if(sortType.value == "1") {
+      return list.map(wordListFormat)
+    } else {
+      return list.sort(() => Math.random() - 0.5).map(wordListFormat)
+    }
   })
   const playWord = word => {
     let type = langType.value
@@ -150,6 +161,7 @@ function setup(props, ctx) {
     railStyle,
     langType,
     voiceType,
+    sortType,
     inputValue,
     selectValue,
     selectOptions,
