@@ -126,12 +126,15 @@ function setup(props, ctx) {
     return { word, label: `${index+1}. ${word}`, index }
   }
   const wordList = Vue.computed(() => {
-    let list = inputValue.value.split(/[\r\n]+/g)
-    if(sortType.value == "1") {
-      return list.map(wordListFormat)
-    } else {
-      return list.sort(() => Math.random() - 0.5).map(wordListFormat)
+    if(inputValue.value) {
+      let list = inputValue.value.split(/[\r\n]+/g)
+      if(sortType.value == "1") {
+        return list.map(wordListFormat)
+      } else {
+        return list.sort(() => Math.random() - 0.5).map(wordListFormat)
+      }
     }
+    return []
   })
   const playWord = word => {
     let type = langType.value
