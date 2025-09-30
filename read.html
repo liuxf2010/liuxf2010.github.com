@@ -5,7 +5,8 @@
   <title>Read Word</title>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
   <meta name="renderer" content="webkit">
-  <script src="https://unpkg.com/vue"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <script src="https://unpkg.com/vue@3.5.22/dist/vue.global.js"></script>
   <script src="https://unpkg.com/naive-ui@2.42.0/dist/index.prod.js"></script>
   <style type="text/css">
     html { color: rgba(255, 255, 245, 0.86); }
@@ -18,9 +19,7 @@
     .item-grid { flex: 1; }
     .n-list .n-list-item { padding-left: 8px; }
     @media (max-width: 1000px) {
-      .wrapper-grid {
-        flex-direction: column;
-      }
+      .wrapper-grid { flex-direction: column; }
     }
   </style>
 </head>
