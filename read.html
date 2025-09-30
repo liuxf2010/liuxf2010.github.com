@@ -48,7 +48,7 @@
           <n-input v-model:value="inputValue" type="textarea" placeholder="请输入" class="textarea" />
         </div>
         <div class="item-grid">
-          <n-list clickable>
+          <n-list clickable hoverable>
             <n-list-item v-for="(item, index) in wordList" :key="index" @click="handlePlay(index)">{{ item.label }}</n-list-item>
           </n-list>
         </div>
