@@ -41,7 +41,7 @@
         <n-input-number v-model:value="voiceRate" :step="0.1" button-placement="both" round v-else>
           <template #prefix>语速</template>
         </n-input-number>
-        <n-tree-select v-model:value="selectValue" :options="selectOptions" :indent="8" default-expand-all @update:value="handleSelectValue" class="flex" placeholder="请选择"></n-tree-select>
+        <n-select v-model:value="selectValue" :options="selectOptions" @update:value="handleSelectValue" class="flex" placeholder="请选择"></n-select>
         <n-switch :rail-style="railStyle" checked-value="1" unchecked-value="0" v-model:value="sortType">
           <template #checked>顺序</template>
           <template #unchecked>随机</template>
@@ -49,7 +49,7 @@
       </n-flex>
       <div class="wrapper-grid">
         <div class="item-grid">
-          <n-input v-model:value="inputValue" type="textarea" placeholder="请输入" class="textarea"></n-input>
+          <n-input v-model:value="inputValue" type="textarea" placeholder="请输入" class="textarea" />
         </div>
         <div class="item-grid">
           <n-list clickable hoverable>
@@ -60,7 +60,22 @@
     </n-space>
   </n-config-provider>
 </div>
-<script src="./word_list_data.js"></script>
+<script>
+const word_list_data = [
+"2025-8-3 listen|听 sound|声音 speak|说话 write|写 answer|回答 question|问题 trousers|裤子 hurt|受伤 hospital|医院 table|表 nurse|护士 well|健康的 holiday|节日 travel|旅游 fly|飞行",
+"2025-8-4 room|房间 sea|海洋 beach|海滩 map|地图 place|地方 visit|参观 hurry|匆忙 buy|购买 shop|商店 sell|出售 gift|礼物 picture|照片 wonderful|极好的 famous|著名的 welcome|欢迎",
+"2025-8-5 fast|快的 slow|慢的 stop|车站 park|公园 safe|安全的 free|自由的 city|城市 money|货币 science|科学 internet|因特网 phone|电话 email|电子邮件 robot|机器人 wire|电线 hill|山丘",
+"2025-8-6 water|水 river|河 lake|湖 air|空气 weather|天气 sun|太阳 sunny|晴朗的 cloudy|多云的 windy|有风的 rain|雨 ice|冰 warm|温暖的 hot|热的 pet|宠物 animal|动物",
+"2025-8-7 cat|猫 dog|狗 bird|鸟 tiger|虎 panda|熊猫 monkey|猴 lion|狮 elephant|象 zoo|动物园 fish|鱼 farm|农场 sleep|羊 rabbit|兔 pig|猪 horse|马",
+"2025-8-8 cow|奶牛 duck|鸭 tail|尾巴 plant|种植 flower|花 grass|草 tree|树 field|田 dirty|脏的 clean|打扫 tidy|整理 earth|地球 fire|火;开枪 astronaut|宇航员 space|空间 star|星",
+"2025-9-3 suppose|想 birthmark|胎记 bright|鲜艳的 strawberry|草莓 crowded|拥挤的",
+"2025-9-4 disaster|灾难 therefore|因此 cover|遮盖 instead|代替 instead_of|代替... although|虽然 bathroom|浴室 quickly|马上 truly|真实地 paint|画",
+"2025-9-6 yet|还 anyway|总之 already|已经 difference|差异 hate|讨厌 successful|有成就的 scientific|科学的 wise|明智的 present|现在完成时 row|一排",
+"2025-9-7 height|身高 literature|文学 character|人物 brain|脑 value|价值观 quality|素质 impossible|不可能的 nothing|没有任何东西 actress|女演员 silver|银质的",
+"2025-9-17 condition|长期疾病 cost|花费 lend|借出 lend_somebody_a_hand|帮助某人做事 3-D|三维 printer|打印机 invent|发明 weigh|重量",
+"2025-9-21 kilogram|千克 fix|解决 invention|发明 download|下载 apply|应用 blind|盲的 machine|机器 warn|警告 object|物体",
+]
+</script>
 <script>
 function playWordByAudio({ type, word }) {
   let audio = document.getElementById("audio")
@@ -96,10 +111,10 @@ function setup(props, ctx) {
   const inputValue = Vue.ref("")
   const selectValue = Vue.ref(null)
   const selectOptions = Vue.ref([])
-  const handleSelectValue = value => {
-    let index = word_list_data.findIndex(d => d.review_id == value)
-    if(index > -1) {
-      inputValue.value = word_list_data[index].content
+  const handleSelectValue = index => {
+    let text = word_list_data[index]
+    if(text) {
+      inputValue.value = text.split(" ").slice(1).join("\r\n").replace(/_/g, " ")
     }
   }
   const wordListFormat = (word, index) => {
@@ -140,24 +155,10 @@ function setup(props, ctx) {
     playWord(word)
   }
   const onMountedCallback = () => {
-    let listMap = {}
-    word_list_data.map(d => {
-      let item = { label: d.title, key: d.review_id, isLeaf: true }
-      let category_key = `c-${d.review_at}-${d.category}`
-      let category_label = d.category
-      if(listMap[d.review_at]) {
-        let index = listMap[d.review_at].children.findIndex(d => d.key == category_key)
-        if(index > -1) {
-          listMap[d.review_at].children[index].children.push(item)
-        } else {
-          listMap[d.review_at].children.push({ label: category_label, key: category_key, children:[item], disabled: true })
-        }
-      } else {
-        let children = [{ label: category_label, key: category_key, children:[item], disabled: true }]
-        listMap[d.review_at] = { label: d.review_at, key: `p-${d.review_at}`, children, disabled: true }
-      }
+    selectOptions.value = word_list_data.map((text, index) => {
+      let label = text.split(" ")[0]
+      return { label, value: index }
     })
-    selectOptions.value = Object.keys(listMap).map(name => listMap[name])
   }
   Vue.onMounted(onMountedCallback)
   return {
