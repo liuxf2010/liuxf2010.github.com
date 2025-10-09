@@ -142,7 +142,7 @@ function setup(props, ctx) {
   const onMountedCallback = () => {
     let listMap = {}
     word_list_data.map(d => {
-      let item = { label: d.title, key: d.review_id, isLeaf: true }
+      let item = { label: `${d.title} # ${d.review_index}`, key: d.review_id, isLeaf: true }
       let category_key = `c-${d.review_at}-${d.category}`
       let category_label = d.category
       if(listMap[d.review_at]) {
