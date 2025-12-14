@@ -13,7 +13,7 @@
 </head>
 <body>
 <div id="app">
-  <h2>10个积分抽一次</h2>
+  <h2>15个积分抽一次</h2>
   <!-- 大转盘抽奖简易demo -->
   <lucky-wheel
     ref="myLucky"
@@ -26,13 +26,10 @@
     @end="endCallback"
   />
 </div>
-
-<!-- vuejs 要在前面引入, 使用你自己本地的 vuejs 即可 -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-<!-- 然后引入我提供的 CDN 链接 -->
+<script src="https://unpkg.com/vue@2.7.16/dist/vue.js"></script>
 <script src="https://unpkg.com/@vue/composition-api@1.2.4/dist/vue-composition-api.prod.js"></script>
-<script src="https://unpkg.com/vue-demi@0.11.4"></script>
-<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
+<script src="https://unpkg.com/vue-demi@0.11.4/lib/index.iife.js"></script>
+<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11/dist/index.umd.js"></script>
 <script>
   new Vue({
     el: '#app',
