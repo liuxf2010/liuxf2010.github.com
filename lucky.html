@@ -5,6 +5,7 @@
     <title>Lucky</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
     <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <style>
       html, body { padding:0;margin:0; }
       #app { display:flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center; width:100vw;height:100vh; }
@@ -16,8 +17,8 @@
   <!-- 大转盘抽奖简易demo -->
   <lucky-wheel
     ref="myLucky"
-    width="600px"
-    height="600px"
+    width="360px"
+    height="360px"
     :prizes="prizes"
     :blocks="blocks"
     :buttons="buttons"
@@ -47,10 +48,10 @@
           { fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' },
         ],
         buttons: [
-          { radius: '80px', background: '#617df2' },
-          { radius: '70px', background: '#afc8ff' },
+          { radius: '50px', background: '#617df2' },
+          { radius: '45px', background: '#afc8ff' },
           {
-            radius: '60px', background: '#869cfa',
+            radius: '40px', background: '#869cfa',
             pointer: true,
             fonts: [{ text: '开始\n抽奖', top: '-20px' }]
           },
