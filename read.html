@@ -62,6 +62,9 @@
 </div>
 <script src="./word_list_data.js"></script>
 <script>
+const defaultValue = `Rules  are an important part of our lives. They help keep order and make sure things go well. At school, rules help students learn in a quiet and safe place. At home, rules teach us to be polite and kind, Without rules, life would be full of problems and dangers. For example, in my school, we are not allowed to run in the hallway. This rule may seem simple, but it helps prevent accidents. One time, mu classmate fell because someone broke the rule. After that, we all`
+</script>
+<script>
 function playWordByAudio({ type, word }) {
   let audio = document.getElementById("audio")
   audio.src = `//dict.youdao.com/dictvoice?type=${type}&audio=${word}`
@@ -90,10 +93,10 @@ function setup(props, ctx) {
     return style
   }
   const langType = Vue.ref("1")
-  const voiceType = Vue.ref("1")
+  const voiceType = Vue.ref("0")
   const voiceRate = Vue.ref(1)
   const sortType = Vue.ref("1")
-  const inputValue = Vue.ref("")
+  const inputValue = Vue.ref(defaultValue)
   const selectValue = Vue.ref(null)
   const selectOptions = Vue.ref([])
   const handleSelectValue = value => {

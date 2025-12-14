@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lucky</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+    <meta name="renderer" content="webkit">
+    <style>
+      html, body { padding:0;margin:0; }
+      #app { display:flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center; width:100vw;height:100vh; }
+    </style>
+</head>
+<body>
+<div id="app">
+  <h2>10个积分抽一次</h2>
+  <!-- 大转盘抽奖简易demo -->
+  <lucky-wheel
+    ref="myLucky"
+    width="400px"
+    height="400px"
+    :prizes="prizes"
+    :blocks="blocks"
+    :buttons="buttons"
+    @start="startCallback"
+    @end="endCallback"
+  />
+</div>
+
+<!-- vuejs 要在前面引入, 使用你自己本地的 vuejs 即可 -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- 然后引入我提供的 CDN 链接 -->
+<script src="https://unpkg.com/@vue/composition-api@1.2.4/dist/vue-composition-api.prod.js"></script>
+<script src="https://unpkg.com/vue-demi@0.11.4"></script>
+<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data () {
+      return {
+        blocks: [{ padding: '13px', background: '#617df2' }],
+        prizes: [
+          { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '15分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '20分钟', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' },
+        ],
+        buttons: [
+          { radius: '50px', background: '#617df2' },
+          { radius: '45px', background: '#afc8ff' },
+          {
+            radius: '40px', background: '#869cfa',
+            pointer: true,
+            fonts: [{ text: '开始\n抽奖', top: '-20px' }]
+          },
+        ],
+      }
+    },
+    methods: {
+      // 点击抽奖按钮会触发star回调
+      startCallback () {
+        // 调用抽奖组件的play方法开始游戏
+        this.$refs.myLucky.play()
+        // 模拟调用接口异步抽奖
+        const time = new Date().getTime() % 900 + 100
+        setTimeout(() => {
+          // 假设后端返回的中奖索引是0
+          const index = new Date().getTime() % 6
+          console.log("index/time", index, time)
+          // 调用stop停止旋转并传递中奖索引
+          this.$refs.myLucky.stop(index)
+        }, time)
+      },
+      // 抽奖结束会触发end回调
+      endCallback (prize) {
+        console.log(prize.fonts[0].text)
+      },
+    }
+  })
+</script>
+</body>
+</html>
