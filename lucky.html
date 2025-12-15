@@ -13,7 +13,7 @@
 </head>
 <body>
 <div id="app">
-  <h2>15个积分抽一次</h2>
+  <h2>20个积分抽一次</h2>
   <!-- 大转盘抽奖简易demo -->
   <lucky-wheel
     ref="myLucky"
@@ -40,8 +40,10 @@
           { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
           { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
           { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
-          { fonts: [{ text: '15分钟', top: '10%' }], background: '#b8c5f2' },
-          { fonts: [{ text: '20分钟', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '20分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
           { fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' },
         ],
         buttons: [
@@ -64,7 +66,7 @@
         const time = new Date().getTime() % 900 + 100
         setTimeout(() => {
           // 假设后端返回的中奖索引是0
-          const index = new Date().getTime() % 6
+          const index = new Date().getTime() % 8
           console.log("index/time", index, time)
           // 调用stop停止旋转并传递中奖索引
           this.$refs.myLucky.stop(index)
