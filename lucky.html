@@ -22,6 +22,7 @@
     :prizes="prizes"
     :blocks="blocks"
     :buttons="buttons"
+    :default-config="defaultConfig"
     @start="startCallback"
     @end="endCallback"
   />
@@ -37,14 +38,14 @@
       return {
         blocks: [{ padding: '13px', background: '#617df2' }],
         prizes: [
-          { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
-          { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
-          { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
-          { fonts: [{ text: '20分钟', top: '10%' }], background: '#b8c5f2' },
-          { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
-          { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
-          { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
-          { fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' },
+          { range: 15, fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
+          { range: 20, fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
+          { range: 10, fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
+          { range: 5, fonts: [{ text: '20分钟', top: '10%' }], background: '#b8c5f2' },
+          { range: 15, fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
+          { range: 20, fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
+          { range: 10, fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
+          { range: 5, fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' }
         ],
         buttons: [
           { radius: '50px', background: '#617df2' },
@@ -53,24 +54,34 @@
             radius: '40px', background: '#869cfa',
             pointer: true,
             fonts: [{ text: '开始\n抽奖', top: '-20px' }]
-          },
+          }
         ],
+        defaultConfig: {
+          accelerationTime: 1000,
+          decelerationTime: 2000
+        }
       }
     },
     methods: {
+      indexRandom(callback) {
+        const count = 8
+        const time = new Date().getTime() % 500 + 100
+        setTimeout(() => {
+          const index1 = new Date().getTime() % count
+          const index2 = Math.floor(Math.random() * count)
+          const index = Math.floor((index1 + index2) / 2)
+          callback(index)
+        }, time)
+      },
       // 点击抽奖按钮会触发star回调
       startCallback () {
         // 调用抽奖组件的play方法开始游戏
         this.$refs.myLucky.play()
         // 模拟调用接口异步抽奖
-        const time = new Date().getTime() % 900 + 100
-        setTimeout(() => {
-          // 假设后端返回的中奖索引是0
-          const index = new Date().getTime() % 8
-          console.log("index/time", index, time)
-          // 调用stop停止旋转并传递中奖索引
-          this.$refs.myLucky.stop(index)
-        }, time)
+        this.indexRandom(index => {
+          console.log("index", index)
+          this.$refs.myLucky.stop()
+        })
       },
       // 抽奖结束会触发end回调
       endCallback (prize) {
