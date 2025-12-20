@@ -70,7 +70,12 @@
           const index1 = new Date().getTime() % count
           const index2 = Math.floor(Math.random() * count)
           const index = Math.floor((index1 + index2) / 2)
-          callback(index)
+          const weekDay = new Date().getDay()
+          if(weekDay === 0 || weekDay > 4) {
+            callback(index)
+          } else {
+            callback()
+          }
         }, time)
       },
       // 点击抽奖按钮会触发star回调
@@ -79,8 +84,7 @@
         this.$refs.myLucky.play()
         // 模拟调用接口异步抽奖
         this.indexRandom(index => {
-          console.log("index", index)
-          this.$refs.myLucky.stop()
+          this.$refs.myLucky.stop(index)
         })
       },
       // 抽奖结束会触发end回调
