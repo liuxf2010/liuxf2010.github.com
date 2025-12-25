@@ -38,14 +38,14 @@
       return {
         blocks: [{ padding: '13px', background: '#617df2' }],
         prizes: [
-          { range: 15, fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
-          { range: 20, fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
-          { range: 10, fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
-          { range: 5, fonts: [{ text: '20分钟', top: '10%' }], background: '#b8c5f2' },
-          { range: 15, fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
-          { range: 20, fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
-          { range: 10, fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
-          { range: 5, fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' }
+          { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '20分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '谢谢参与', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '5分钟', top: '10%' }], background: '#b8c5f2' },
+          { fonts: [{ text: '10分钟', top: '10%' }], background: '#e9e8fe' },
+          { fonts: [{ text: '30分钟', top: '10%' }], background: '#b8c5f2' }
         ],
         buttons: [
           { radius: '50px', background: '#617df2' },
@@ -70,12 +70,7 @@
           const index1 = new Date().getTime() % count
           const index2 = Math.floor(Math.random() * count)
           const index = Math.floor((index1 + index2) / 2)
-          const weekDay = new Date().getDay()
-          if(weekDay === 0 || weekDay > 4) {
-            callback(index)
-          } else {
-            callback()
-          }
+          callback(index)
         }, time)
       },
       // 点击抽奖按钮会触发star回调
