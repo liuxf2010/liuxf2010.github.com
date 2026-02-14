@@ -142,6 +142,9 @@ function setup(props, ctx) {
     word = word.split(" ").map(wd => shortMap[wd] || wd).join(" ")
     playWord(word)
   }
+  const handleSortList = (a, b) => {
+    return parseFloat(a.split("-").join("")) - parseFloat(b.split("-").join(""))
+  }
   const onMountedCallback = () => {
     let listMap = {}
     word_list_data.map(d => {
@@ -160,7 +163,7 @@ function setup(props, ctx) {
         listMap[d.review_at] = { label: d.review_at, key: `p-${d.review_at}`, children, disabled: true }
       }
     })
-    selectOptions.value = Object.keys(listMap).map(name => listMap[name])
+    selectOptions.value = Object.keys(listMap).sort(handleSortList).map(name => listMap[name])
   }
   Vue.onMounted(onMountedCallback)
   return {
