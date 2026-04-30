@@ -1,4 +1,4 @@
-const word_list_data = const word_list_data = [
+const word_list_data = [
 {"title":"2026-3-6 短语","category":"八下单词短语","content":"look after|照顾，照料\ntake care of|照顾，照料\nnot just...but also|不仅仅...而且...\nnot only...but also|不但...而且...\ntake a deep breath|深吸一口气\nclear one's throat|清清嗓子","type":"2","review_id":1103,"review_at":"2026-05-04","review_index":7},
 {"title":"2026-4-3 短语","category":"八下单词短语","content":"look at|看\nin a low voice|低声地\nstay out|待在外面\nhead back|往回走，返回\non one's way back|在某人回去的路上\ngo back|回去","type":"2","review_id":1200,"review_at":"2026-05-02","review_index":6},
 {"title":"2026-4-17 短语","category":"八下单词短语","content":"have a(n) ... day|度过...的一天\nturn down|拒绝\ntake away|拿走\nuse something for...|用某物做...\nstay in touch with|与...保持联系\ncut off (from...)|断绝(与...的)联系","type":"2","review_id":1234,"review_at":"2026-05-01","review_index":5},
