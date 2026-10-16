@@ -1,0 +1,18 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favBg" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F6CBD"/>
+      <stop offset="0.35" stop-color="#00B8A9"/>
+      <stop offset="0.7" stop-color="#FFC53D"/>
+      <stop offset="1" stop-color="#FF7A1A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 圆角方形底 -->
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#favBg)"/>
+
+  <!-- 极简白色 H -->
+  <rect x="18" y="16" width="10" height="32" rx="5" fill="white"/>
+  <rect x="36" y="16" width="10" height="32" rx="5" fill="white"/>
+  <rect x="18" y="27" width="28" height="10" rx="5" fill="white"/>
+</svg>
