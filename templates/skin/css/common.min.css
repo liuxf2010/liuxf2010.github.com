@@ -218,8 +218,10 @@ section[id]{scroll-margin-top:var(--header-h);}
   stroke-linecap:round;stroke-linejoin:round;}
 
 /* 二维码图片入口 */
-.nav-cta{padding:0;font-size:14px;}
-.nav-cta img{width:88px;display:block;}
+.nav-cta,.nav-taobao{padding:0;font-size:14px;}
+.nav-cta img,.nav-taobao img{width:88px;display:block;}
+.nav-taobao-cta{display:none;gap:24px;padding-left:12px;padding-top:12px;}
+.nav-taobao-cta img{width:88px;}
 
 /* ---------- 第二行：菜单独占一行 ---------- */
 .nav-row{
@@ -241,8 +243,8 @@ section[id]{scroll-margin-top:var(--header-h);}
     rgba(255,122,26,.22) 84%,
     transparent 100%);
 }
-
-.nav-menu{display:flex;align-items:center;gap:4px;}
+.nav-menu,
+.nav-menu nav{display:flex;align-items:center;gap:4px;}
 .nav-menu a{
   position:relative;
   padding:9px 18px;border-radius:10px;
@@ -294,10 +296,14 @@ section[id]{scroll-margin-top:var(--header-h);}
     overflow-y:auto;
   }
   .nav-menu.open{transform:translateX(0);}
+  .nav-menu nav{
+    flex-direction:column;align-items:stretch;
+  }
   .nav-menu a{padding:15px 16px;font-size:16px;border-radius:12px;}
   .nav-menu a::after{display:none;}
   .menu-toggle{display:flex;}
-  .nav-phone,.nav-cta{display:none;}
+  .nav-phone,.nav-cta,.nav-taobao{display:none;}
+  .nav-taobao-cta{display:flex;}
 }
 /* ============================================================
    【FOOTER】页脚样式

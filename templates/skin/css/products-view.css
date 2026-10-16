@@ -224,7 +224,32 @@
   flex:1;
   min-width:160px;
 }
-
+.btn-cart{
+  background:linear-gradient(135deg,#FF5000,#FF8A00);
+  background-size:180% 100%;
+  color:#fff;
+  box-shadow:0 10px 26px rgba(255,80,0,.28);
+}
+.btn-cart:hover{
+  transform:translateY(-3px);
+  background-position:100% 50%;
+  box-shadow:0 16px 40px rgba(255,80,0,.4);
+}
+.btn-cart svg{
+  width:17px;height:17px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+/* 移动端按钮：三个按钮竖排更清晰 */
+@media (max-width:740px){
+  .product-actions .btn{
+    flex:1 1 100%;
+    min-width:0;
+  }
+}
 /* 服务保障条 */
 .product-service{
   display:grid;
